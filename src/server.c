@@ -6,7 +6,7 @@
 /*   By: yjaafar <yjaafar@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 16:41:18 by yjaafar           #+#    #+#             */
-/*   Updated: 2025/01/05 23:08:14 by yjaafar          ###   ########.fr       */
+/*   Updated: 2025/01/07 00:17:32 by yjaafar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ void	ft_signal_handler(int signum, siginfo_t *info, void *context)
 	}
 	if (bits == 8)
 		bits = 0;
+	if (kill(info->si_pid, SIGUSR2) == -1)
+		ft_exit(-6);
 }
 
 int	main(void)
@@ -44,10 +46,13 @@ int	main(void)
 
 	sa.sa_flags = SA_SIGINFO;
 	sa.sa_sigaction = ft_signal_handler;
-	sigemptyset(&sa.sa_mask);
+	if (sigemptyset(&sa.sa_mask) == -1)
+		ft_exit(-7);
 	ft_display_banner();
-	sigaction(SIGUSR1, &sa, NULL);
-	sigaction(SIGUSR2, &sa, NULL);
+	if (sigaction(SIGUSR1, &sa, NULL) == -1)
+		ft_exit(-8);;
+	if (sigaction(SIGUSR2, &sa, NULL) == -1)
+		ft_exit(-8);
 	while (1)
 	{
 		pause();
