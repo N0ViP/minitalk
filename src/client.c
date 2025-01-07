@@ -6,7 +6,7 @@
 /*   By: yjaafar <yjaafar@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 16:41:33 by yjaafar           #+#    #+#             */
-/*   Updated: 2025/01/07 00:08:51 by yjaafar          ###   ########.fr       */
+/*   Updated: 2025/01/07 02:06:57 by yjaafar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	ft_send_signal(unsigned char c, int server_pid)
 				ft_exit(-2);
 		}
 		bits--;
-		while (!atomic)
+		while (!g_atomic)
 			usleep(20);
 		g_atomic = 0;
 	}
@@ -57,10 +57,8 @@ int	main(int ac, char *av[])
 
 	if (ac != 3)
 		ft_exit(0);
-	if (signal(SIGUSR1, ft_usr1_handler) == -1)
-		ft_exit(-8);
-	if (signal(SIGUSR2, ft_usr2_handler) == -1)
-		ft_exit(-8);
+	signal(SIGUSR1, ft_usr1_handler);
+	signal(SIGUSR2, ft_usr2_handler);
 	server_pid = atoi(av[1]);
 	if (server_pid <= 0)
 		return (-3);
