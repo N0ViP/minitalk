@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   server_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yjaafar <yjaafar@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/03 16:41:18 by yjaafar           #+#    #+#             */
-/*   Updated: 2025/01/08 03:49:10 by yjaafar          ###   ########.fr       */
+/*   Created: 2025/01/08 03:55:26 by yjaafar           #+#    #+#             */
+/*   Updated: 2025/01/08 03:59:20 by yjaafar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "minitalk_bonus.h"
 
 static void	ft_signal_handler(int signum, siginfo_t *info,
 	void __attribute__((unused)) *context)
