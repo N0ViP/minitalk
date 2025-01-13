@@ -6,7 +6,7 @@
 /*   By: yjaafar <yjaafar@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 16:41:18 by yjaafar           #+#    #+#             */
-/*   Updated: 2025/01/08 03:49:10 by yjaafar          ###   ########.fr       */
+/*   Updated: 2025/01/13 09:17:32 by yjaafar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,6 @@ static void	ft_signal_handler(int signum, siginfo_t *info,
 	{
 		if (write(1, buffer, bytes) == -1)
 			ft_exit(-5);
-		if (!c && bits == 8)
-			if (kill(info->si_pid, SIGUSR1) == -1)
-				ft_exit(-1);
 		bytes = 0;
 	}
 	if (bits == 8)

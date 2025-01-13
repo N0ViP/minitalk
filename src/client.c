@@ -6,18 +6,13 @@
 /*   By: yjaafar <yjaafar@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 16:41:33 by yjaafar           #+#    #+#             */
-/*   Updated: 2025/01/08 03:49:32 by yjaafar          ###   ########.fr       */
+/*   Updated: 2025/01/13 09:17:41 by yjaafar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
 volatile sig_atomic_t	g_atomic = 0;
-
-static void	ft_usr1_handler(int __attribute__((unused)) signum)
-{
-	ft_exit(1);
-}
 
 static void	ft_usr2_handler(int __attribute__((unused)) signum)
 {
@@ -57,7 +52,6 @@ int	main(int ac, char *av[])
 
 	if (ac != 3)
 		ft_exit(0);
-	signal(SIGUSR1, ft_usr1_handler);
 	signal(SIGUSR2, ft_usr2_handler);
 	server_pid = atoi(av[1]);
 	if (server_pid <= 0)
@@ -69,8 +63,4 @@ int	main(int ac, char *av[])
 		i++;
 	}
 	ft_send_signal('\0', server_pid);
-	while (1)
-	{
-		pause();
-	}
 }
