@@ -15,7 +15,7 @@
 
 # include <unistd.h>
 # include <signal.h>
-# include "../ft_printf/include/ft_printf.h"
+# include "ft_printf.h"
 
 void	ft_exit(int exit_code);
 void	ft_display_banner(void);

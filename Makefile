@@ -1,37 +1,22 @@
 CC = cc
-
 FLAGS = -Wall -Wextra -Werror
-
 NAME = minitalk
-
 CLIENT = client
-
 SERVER = server
-
 EXIT_MESSAGE = exit_messages
-
 BANNER = banner
-
 SRC = src
-
 UTILS = utils
-
 SRC_BONUS = src_bonus
-
 UTILS_BONUS = utils_bonus
-
 INCLUDE = include
-
+FT_PRINTF_INCLUDE = ft_printf/include
 INCLUDE_BONUS = include_bonus
-
 FT_PRINTF = ft_printf/libftprintf.a
-
 OBJECTS = objects
 
-vpath %.c %.h $(UTILS) $(INCLUDE) $(SRC)
-
-vpath %_bonus.c %_bonus.h $(UTILS_BONUS) $(INCLUDE_BONUS) $(SRC_BONUS)
-
+vpath %.c $(UTILS) $(SRC)
+vpath %_bonus.c $(UTILS_BONUS) $(SRC_BONUS)
 vpath %.o $(OBJECTS)
 
 all : $(NAME)
@@ -47,7 +32,7 @@ bonus : $(FT_PRINTF) $(addsuffix _bonus.o, $(CLIENT) $(SERVER) $(EXIT_MESSAGE) $
 	touch bonus
 
 %.o : %.c | objects
-	$(CC) $(FLAGS) -c $< -o $(OBJECTS)/$@ -I $(INCLUDE) -I $(INCLUDE_BONUS)
+	$(CC) $(FLAGS) -c $< -o $(OBJECTS)/$@ -I $(INCLUDE) -I $(INCLUDE_BONUS) -I $(FT_PRINTF_INCLUDE)
 
 objects :
 	mkdir -p objects
