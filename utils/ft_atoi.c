@@ -1,23 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minitalk.h                                         :+:      :+:    :+:   */
+/*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yjaafar <yjaafar@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/04 21:25:37 by yjaafar           #+#    #+#             */
-/*   Updated: 2025/01/16 13:24:55 by yjaafar          ###   ########.fr       */
+/*   Created: 2025/01/15 22:26:17 by yjaafar           #+#    #+#             */
+/*   Updated: 2025/01/16 13:21:55 by yjaafar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINITALK_H
-# define MINITALK_H
+#include "minitalk.h"
 
-# include <unistd.h>
-# include <signal.h>
-# include "../ft_printf/include/ft_printf.h"
+int	ft_atoi(char *s)
+{
+	int	res;
+	int	sign;
 
-void	ft_exit(int exit_code);
-void	ft_display_banner(void);
-
-#endif
+	while (*s && ((*s >= 9 && *s <= 13) || *s == 32))
+		*s++;
+	sign = -1 * (*s == 45) + (*s != 45);
+	s += (*s == 45 || *s == 43);
+	if (!*s)
+		return (0);
+	res = 0;
+	while (*s >= 48 && *s <= 57)
+	{
+		res = ((res << 3) + (res << 1)) + (*s & 0b00001111);
+		s++;
+	}
+	return (res * sign);
+}

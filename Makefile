@@ -42,7 +42,7 @@ $(NAME) : $(FT_PRINTF) $(addsuffix .o, $(CLIENT) $(SERVER) $(EXIT_MESSAGE) $(BAN
 	touch $(NAME)
 
 bonus : $(FT_PRINTF) $(addsuffix _bonus.o, $(CLIENT) $(SERVER) $(EXIT_MESSAGE) $(BANNER))
-	$(CC) $(FLAGS) $(addsuffix _bonus.o, $(addprefix $(OBJECTS)/, $(CLIENT) $(EXIT_MESSAGE))) $(FT_PRINTF) -o $(CLIENT)_bonus
+	$(CC) $(FLAGS) $(addsuffix _bonus.o, $(addprefix $(OBJECTS)/, $(CLIENT) $(EXIT_MESSAGE) $(FT_ATOI))) $(FT_PRINTF) -o $(CLIENT)_bonus
 	$(CC) $(FLAGS) $(addsuffix _bonus.o, $(addprefix $(OBJECTS)/, $(SERVER) $(BANNER) $(EXIT_MESSAGE))) $(FT_PRINTF) -o $(SERVER)_bonus
 	touch bonus
 
