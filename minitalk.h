@@ -8,13 +8,12 @@
 /* SIGUSR1 = 1 */
 /* SIGUSR2 = 0 */
 
-typedef struct	s_stock
+typedef struct s_clients
 {
-    int						server_pid;
-	int						bits;
-    volatile sig_atomic_t	var;
-}	t_stock;
-
+	int					client_pid;
+	char				*message;
+	struct s_clients	next;
+}	t_clients;
 
 
 void	ft_exit(int n);
