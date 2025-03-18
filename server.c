@@ -1,9 +1,53 @@
 #include "minitalk.h"
 
+int	fill_message(int signum, t_clients *client)
+{
+	if (!client->message)
+	{
+		client->message = malloc(1024);	//??
+	}
+	if (client->i == client->len - 1 && client->message[client->i])		//??
+	{
+		client->message = strjoin(client->message);	//??
+		client->len += 1024;
+	}
+	client->bits++;
+	client->c <<= 0X01;
+	if (signum == SIGUSR1)
+		client->c |= 0X01;
+	if (client->bits == 8 && client->c)
+	{
+		client->message[client->i++] = client->c;
+	}
+
+}
+
+int	get_client(int signum, t_clients *root, int pid)
+{
+	t_clients	*tmp;
+
+	tmp = root;
+	while (tmp && tmp->client_pid != pid)
+	{
+		tmp = tmp->next;
+	}
+	if (!tmp)
+	{
+		tmp = addnode_back(&root, pid);
+	}
+	fill_mssage(tmp);
+}
+
 static void	sighandler(int signum, siginfo_t *info, void __attribute__((unused)) *context)
 {
-	static	t_clients;
+	static	t_clients	*root;
+	t_clients			ptr;
 
+	if (get_client(signum, root, info->si_pid) == -1)
+		ft_exit(1);
+	print_message(root);
+	if (kill(SIGUSR1, info->si_info))
+		ft_exit(2);
 }
 
 int	main(void)
@@ -15,9 +59,4 @@ int	main(void)
 	sa.sa_sigaction = sighandler;
 	if (sigemptyset(&sa.sa_mask) == -1)
 		ft_exit(0);
-	if (sigaddset(&sa.sa_mask, SIGUSR1) == -1)
-		ft_exit(0);
-	if (sigaddset(&sa.sa_mask, SIGUSR2) == -1)
-		ft_exit(0);
-	
 }
