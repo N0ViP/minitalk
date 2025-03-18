@@ -5,10 +5,8 @@ static t_stock stock;
 static void	send_byte(int server_pid, char c)
 {
 	int	i;
-	int	re;
 
 	i = 7;
-	re = 0;
 	while (i >= 0)
 	{
 		if ((c >> i) & 0X01 == 1)
@@ -24,7 +22,6 @@ static void	send_byte(int server_pid, char c)
 		stock.check = 0;
 		i--;
 	}
-	return (re);
 }
 
 static void signal_handler(int signum, siginfo_t *info, void __attribute__((unused)) *context)
@@ -65,7 +62,7 @@ static int	send_string(int ac, char *av[])
 			break;
 		}
 	}
-	ft_send_byte(server_pid, 0);
+	send_byte(server_pid, 0);
 	return (re);
 }
 

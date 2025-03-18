@@ -19,15 +19,15 @@ t_clients	*addnode_back(t_clients **root, int pid)
 		ptr = *root;
 		if (!*root)
 		{
-				*root = (t_clients) malloc(sizeof(t_clients));
+				*root = (t_clients *) malloc(sizeof(t_clients));
 				if (!*root)
 						return (NULL);
 				return (init_node(*root, pid), *root);
 		}
 		while (ptr->next)
-					ptr = ptr->next;
-			ptr->next = (t_clients) mallco(sizeof(t_clients));
-			if (!ptr)
-					return (NULL);
-			return (init_node(ptr->next, pid), ptr->next);
+				ptr = ptr->next;
+		ptr->next = (t_clients *) malloc(sizeof(t_clients));
+		if (!ptr)
+				return (NULL);
+		return (init_node(ptr->next, pid), ptr->next);
 }

@@ -4,6 +4,7 @@
 # include <signal.h>
 # include <unistd.h>
 # include <stdlib.h>
+# include <stdio.h>
 
 /* SIGUSR1 = 1 */
 /* SIGUSR2 = 0 */
@@ -17,7 +18,7 @@ typedef struct s_clients
 	int					len;
 	char				c;
 	char				*message;
-	struct s_clients	next;
+	struct s_clients	*next;
 }	t_clients;
 
 typedef struct s_stock
@@ -31,5 +32,11 @@ int		ft_atoi(char *s);
 int		ft_isdigit(int c);
 int		ft_isspace(int c);
 void	ft_display_banner(void);
+void	*ft_memset(void *str, int c, size_t l);
+size_t	ft_strlen(char *str);
+void	*ft_calloc(size_t n);
+t_clients	*addnode_back(t_clients **root, int pid);
+char	*strjoin(char *str);
+void print_message(t_clients **begin_list);
 
 #endif
