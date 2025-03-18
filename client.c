@@ -1,8 +1,8 @@
 #include "minitalk.h"
 
-static volatile sig_atomic_t g_var;
+static t_stock stock;
 
-static int	ft_send_byte(int server_pid, char c)
+static void	send_byte(int server_pid, char c)
 {
 	int	i;
 	int	re;
@@ -17,15 +17,11 @@ static int	ft_send_byte(int server_pid, char c)
 		else
 			if (kill(server_pid, SIGUSR2) == -1)
 				ft_exit(3);
-		while (g_var != 1)
+		while (!stock.check)
 		{
 			usleep(50);
-			if (g_var == 2)
-				re = 2;
 		}
-		if (g_var == 2)
-			re = 2;
-		g_var = 0;
+		stock.check = 0;
 		i--;
 	}
 	return (re);
@@ -35,7 +31,7 @@ static void signal_handler(int signum, siginfo_t *info, void __attribute__((unus
 {
 	if (signum == SIGUSR1)
 	{
-		g_var = 1;
+		stock.check = 1;
 	}
 	else if (signum == SIGUSR2)
 	{
@@ -43,7 +39,7 @@ static void signal_handler(int signum, siginfo_t *info, void __attribute__((unus
 	}
 	else
 	{
-		g_var = 2;
+		stock.sigint = 1;
 	}
 }
 
@@ -62,13 +58,13 @@ static int	send_string(int ac, char *av[])
 	re = 0;
 	while (av[2][i])
 	{
-		if (ft_send_byte(server_pid, av[2][i++]) == 2 || g_var == 2)
+		send_byte(server_pid, av[2][i++]);
+		if (stock.sigint)
 		{
 			re = 130;
 			break;
 		}
 	}
-	g_var = 0;
 	ft_send_byte(server_pid, 0);
 	return (re);
 }

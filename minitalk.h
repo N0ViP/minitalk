@@ -15,6 +15,11 @@ typedef struct s_clients
 	struct s_clients	next;
 }	t_clients;
 
+typedef struct s_stock
+{
+	int						sigint;
+	volatile sig_atomic_t	check;
+}	t_stock;
 
 void	ft_exit(int n);
 int		ft_atoi(char *s);
