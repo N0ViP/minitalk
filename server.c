@@ -4,11 +4,15 @@ int	fill_message(int signum, t_clients *client)
 {
 	if (!client->message)
 	{
-		client->message = malloc(1024);	//??
+		client->message = malloc(1024);
+		if (!client->message)
+			return (-1);
 	}
-	if (client->i == client->len - 1 && client->message[client->i])		//??
+	if (client->i == client->len - 1 && client->message[client->i])
 	{
-		client->message = strjoin(client->message);	//??
+		client->message = strjoin(client->message);
+		if (!client->message)
+			return (-1);
 		client->len += 1024;
 	}
 	client->bits++;
@@ -19,7 +23,7 @@ int	fill_message(int signum, t_clients *client)
 	{
 		client->message[client->i++] = client->c;
 	}
-
+	return (0);
 }
 
 int	get_client(int signum, t_clients *root, int pid)
