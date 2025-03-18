@@ -1,6 +1,6 @@
 #include "minitalk.h"
 
-int	fill_message(int signum, t_clients *client)
+static int	fill_message(int signum, t_clients *client)
 {
 	if (!client->message)
 	{
@@ -26,7 +26,7 @@ int	fill_message(int signum, t_clients *client)
 	return (0);
 }
 
-int	get_client(int signum, t_clients *root, int pid)
+static int	get_client(int signum, t_clients *root, int pid)
 {
 	t_clients	*tmp;
 
