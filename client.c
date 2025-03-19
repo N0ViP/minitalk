@@ -9,7 +9,7 @@ static int	ft_ascii_to_int(char *s)
 
 	while (*s == 32 || (*s >= 9 && *s <= 13))
 		s++;
-	sign = (*s == 45) * -1 || (*s != 45);
+	sign = (*s == 45) * -1 + (*s != 45);
 	s += (*s == 45) || (*s == 43);
 	res = 0;
 	while (*s >= 48 && *s <= 57)
@@ -20,7 +20,7 @@ static int	ft_ascii_to_int(char *s)
 			return (-1);
 		}
 	}
-	return (res * sign);
+	return ((int)res * sign);
 }
 
 static void	signal_handler(int	signum, siginfo_t *info, void __attribute__((unused)) *context)
@@ -31,7 +31,7 @@ static void	signal_handler(int	signum, siginfo_t *info, void __attribute__((unus
 	}
 	else
 	{
-		write(1, "the message recierved successfully\n", 36);
+		write(1, "the message was recierved successfully\n", 36);
 		exit(0);
 	}
 }
@@ -44,21 +44,21 @@ static	void	send_byte(char c, int server_pid)
 	while (bits >= 0)
 	{
 		if (((c >> bits) & 0X01) == 1)
-			if (kill(SIGUSR1, server_pid) == -1)
+			if (kill(server_pid, SIGUSR1) == -1)
 			{
 				write(1, "kill failed\n", 13);
 				exit(1);
 			}
 		else
-			if (kill(SIGUSR2, server_pid) == -1)
+			if (kill(server_pid, SIGUSR2) == -1)
 			{
 				write(1, "kill failed\n", 13);
 				exit(1);
 			}
-			while (!g_var)
-				usleep(50);
-			g_var = 0;
-			bits--;
+		while (!g_var)
+			usleep(50);
+		g_var = 0;
+		bits--;
 	}
 }
 
@@ -87,5 +87,6 @@ int	main(int ac, char *av[])
 		send_byte(av[2][i++], server_pid);
 	}
 	send_byte(0, server_pid);
-	return (0);
+	while (1)
+		pause();
 }
