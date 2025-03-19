@@ -41,11 +41,13 @@ static void	signal_handler(int signum, siginfo_t *info, void __attribute__((unus
 	}
 	message_handler(signum, &client);
 	if (client.client_pid)
+	{
 		if (kill(client.client_pid, SIGUSR1) == -1)
 		{
 			write(1, "kill failed\n", 13);
 			exit(1);
 		}
+	}
 }
 int	main(void)
 {

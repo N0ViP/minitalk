@@ -31,7 +31,7 @@ static void	signal_handler(int	signum, siginfo_t *info, void __attribute__((unus
 	}
 	else
 	{
-		write(1, "the message was recierved successfully\n", 36);
+		write(1, "the message was receirved successfully\n", 40);
 		exit(0);
 	}
 }
@@ -44,17 +44,21 @@ static	void	send_byte(char c, int server_pid)
 	while (bits >= 0)
 	{
 		if (((c >> bits) & 0X01) == 1)
+		{
 			if (kill(server_pid, SIGUSR1) == -1)
 			{
 				write(1, "kill failed\n", 13);
 				exit(1);
 			}
+		}
 		else
+		{
 			if (kill(server_pid, SIGUSR2) == -1)
 			{
 				write(1, "kill failed\n", 13);
 				exit(1);
 			}
+		}
 		while (!g_var)
 			usleep(50);
 		g_var = 0;
@@ -69,14 +73,14 @@ int	main(int ac, char *av[])
 	int					i;
 
 	if (ac != 3)
-		return (write(1, "enter the pid and the message ex:\n./client 1234 \"hello\"\n", 57), 1);
+		return (write(1, "Usage: ./client <server_pid> \"message\"\n", 40), 1);
 	server_pid = ft_ascii_to_int(av[1]);
 	if (server_pid <= 0)
-		return (write(1, "enter the server's pid\n", 24), 1);
+		return (write(1, "Invalid server PID\n", 20), 1);
 	act.sa_flags = SA_SIGINFO;
+	act.sa_sigaction = signal_handler;
 	if (sigemptyset(&act.sa_mask) == -1)
 		return (write(1, "sigemptyset failed\n", 20), 1);
-	act.sa_sigaction = signal_handler;
 	if (sigaction(SIGUSR1, &act, NULL) == -1)
 		return (write(1, "sigaction failed\n", 18), 1);
 	if (sigaction(SIGUSR2, &act, NULL) == -1)
