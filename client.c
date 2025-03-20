@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yjaafar <yjaafar@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/20 10:44:55 by yjaafar           #+#    #+#             */
+/*   Updated: 2025/03/20 10:55:50 by yjaafar          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minitalk.h"
 
 static volatile sig_atomic_t	g_var;
@@ -10,7 +22,7 @@ static int	ft_ascii_to_int(char *s)
 	while (*s == 32 || (*s >= 9 && *s <= 13))
 		s++;
 	sign = (*s == 45) * -1 + (*s != 45);
-	s += (*s == 45) || (*s == 43);
+	s += ((*s == 45) || (*s == 43));
 	res = 0;
 	while (*s >= 48 && *s <= 57)
 	{
@@ -23,7 +35,8 @@ static int	ft_ascii_to_int(char *s)
 	return ((int)res * sign);
 }
 
-static void	signal_handler(int	signum, siginfo_t *info, void __attribute__((unused)) *context)
+static void	signal_handler(int signum, siginfo_t __attribute__((unused))
+	*info, void __attribute__((unused)) *context)
 {
 	if (signum == SIGUSR1)
 	{
@@ -40,7 +53,7 @@ static void	send_byte(char c, int server_pid)
 {
 	int	bits;
 	int	sig;
-	
+
 	bits = 7;
 	while (bits >= 0)
 	{
@@ -87,7 +100,8 @@ int	main(int ac, char *av[])
 	act.sa_sigaction = signal_handler;
 	if (sigemptyset(&act.sa_mask) == -1)
 		return (write(1, "sigemptyset failed\n", 19), 1);
-	if (sigaction(SIGUSR1, &act, NULL) == -1 || sigaction(SIGUSR2, &act, NULL) == -1)
+	if (sigaction(SIGUSR1, &act, NULL) == -1
+		|| sigaction(SIGUSR2, &act, NULL) == -1)
 		return (write(1, "sigaction failed\n", 17), 1);
 	send_message(av[2], server_pid);
 	while (1)
