@@ -19,11 +19,12 @@
 
 typedef struct s_client
 {
-	int		client_pid;
-	int		bit;
-	int		i;
-	char	byte;
-	char	message[4096];
+	int				client_pid;
+	int				bit;
+	int				i;
+	char			byte;
+	char			message[4096];
+    struct s_client *next;
 }	t_client;
 
 #endif
