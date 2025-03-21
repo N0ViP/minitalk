@@ -67,7 +67,7 @@ static void	send_byte(char c, int server_pid)
 			exit(1);
 		}
 		while (!g_var)
-			usleep(10);
+			usleep(50);
 		g_var = 0;
 		bits--;
 	}

@@ -120,6 +120,11 @@ static void	signal_handler(int signum, siginfo_t *info,
 		client.client_pid = info->si_pid;
 	if (client.client_pid != info->si_pid)
 	{
+		if (kill(client.client_pid, SIGUSR2) == -1)
+		{
+			write(1, "kill failed\n", 12);
+			exit(1);
+		}
 		client.client_pid = info->si_pid;
 		client.bit = 0;
 		client.i = 0;
