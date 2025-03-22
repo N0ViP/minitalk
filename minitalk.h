@@ -21,12 +21,15 @@
 
 typedef struct s_client
 {
-	int				client_pid;
+	pid_t			client_pid;
+	int				_bool;
 	int				bit;
 	int				i;
 	char			byte;
 	char			message[4096];
     struct s_client *next;
 }	t_client;
+
+// void	ft_putstr(char *s);
 
 #endif

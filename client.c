@@ -14,6 +14,18 @@
 
 static volatile sig_atomic_t	g_var;
 
+static void	ft_putstr(char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		i++;
+	}
+	write(1, s, i);
+}
+
 static int	ft_ascii_to_int(char *s)
 {
 	long long	res;
@@ -44,7 +56,7 @@ static void	signal_handler(int signum, siginfo_t __attribute__((unused))
 	}
 	else
 	{
-		write(1, "the message was receirved successfully\n", 39);
+		ft_putstr("the message was receirved successfully\n");
 		exit(0);
 	}
 }
@@ -63,7 +75,7 @@ static void	send_byte(char c, int server_pid)
 			sig = SIGUSR2;
 		if (kill(server_pid, sig) == -1)
 		{
-			write(1, "kill failed\n", 12);
+			ft_putstr("kill failed\n");
 			exit(1);
 		}
 		while (!g_var)
@@ -92,17 +104,17 @@ int	main(int ac, char *av[])
 	int					server_pid;			
 
 	if (ac != 3)
-		return (write(1, "Usage: ./client <server_pid> \"message\"\n", 39), 1);
+		return (ft_putstr("./client <server_pid> \"message\"\n"), 1);
 	server_pid = ft_ascii_to_int(av[1]);
 	if (server_pid <= 0 || kill(server_pid, 0) == -1)
-		return (write(1, "Invalid server PID\n", 19), 1);
+		return (ft_putstr("Invalid server PID\n"), 1);
 	act.sa_flags = SA_SIGINFO;
 	act.sa_sigaction = signal_handler;
 	if (sigemptyset(&act.sa_mask) == -1)
-		return (write(1, "sigemptyset failed\n", 19), 1);
+		return (ft_putstr("sigemptyset failed\n"), 1);
 	if (sigaction(SIGUSR1, &act, NULL) == -1
 		|| sigaction(SIGUSR2, &act, NULL) == -1)
-		return (write(1, "sigaction failed\n", 17), 1);
+		return (ft_putstr("sigaction failed\n"), 1);
 	send_message(av[2], server_pid);
 	while (1)
 		pause();
