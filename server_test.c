@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server_test.c                                      :+:      :+:    :+:   */
+/*   server.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yjaafar <yjaafar@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,7 @@
 
 # include "minitalk.h"
 
-static t_client	*client;
+static t_client	*g_client;
 
 static void	banner_part3(void)
 {
@@ -85,21 +85,38 @@ static void	display_banner(void)
 	banner_part3();
 }
 
+static void	delete_client()
+{
+	t_client	*tmp;
+
+	if (!g_client)
+		return ;
+	tmp = g_client->next;
+	if (g_client->i)
+	{
+		write(1, g_client->message, g_client->i);
+		write(1, "\n", 1);
+	}
+	free(g_client);
+	g_client = tmp;
+}
+
 static void	message_handler(int signum)
 {
-	client->bit++;
-	client->byte <<= 1;
+	g_client->bit++;
+	g_client->byte <<= 1;
 	if (signum == SIGUSR1)
-		client->byte |= 0X01;
-	if (client->bit == 8 && client->byte)
-		client->message[client->i++] = client->byte;
-	if (client->i == 4096 || (client->bit == 8 && !client->byte))
+		g_client->byte |= 0X01;
+	if (g_client->bit == 8 && g_client->byte)
+		g_client->message[g_client->i++] = g_client->byte;
+	if (g_client->i == 4096 || (g_client->bit == 8 && !g_client->byte))
 	{
-		write(1, client->message, client->i);
-		if (client->bit == 8 && !client->byte)
+		write(1, g_client->message, g_client->i);
+		g_client->i = 0;
+		if (g_client->bit == 8 && !g_client->byte)
 		{
 			write(1, "\n", 1);
-			kill(client->client_pid, SIGUSR2);
+			kill(g_client->client_pid, SIGUSR2);
 			if (errno == EPERM || errno == EINVAL)
 			{
 				write(1, "kill failed\n", 12);
@@ -108,23 +125,9 @@ static void	message_handler(int signum)
 			}
 			delete_client();
 		}
-		client->i = 0;
 	}
-	if (client->bit == 8)
-		client->bit = 0;
-}
-
-static void	delete_client()
-{
-	t_client	*tmp;
-
-	tmp = client->next;
-	if (client->i)
-	{
-		write(1, client->message, client->i);
-	}
-	free(client);
-	client = tmp;
+	if (g_client && g_client->bit == 8)
+		g_client->bit = 0;
 }
 
 static void	add_node_back(t_client *lst, t_client *node)
@@ -141,16 +144,18 @@ static void	newnode(int signum, pid_t client_pid)
 	t_client	*tmp;
 
 	tmp = (t_client *) malloc(sizeof(t_client));
+	tmp->client_pid = client_pid;
 	tmp->bit = 0;
 	tmp->byte = 0;
 	tmp->i = 0;
 	tmp->next = 0;
-	if (!client)
-		client = tmp;
+	if (!g_client)
+		g_client = tmp;
 	else
-		add_node_back(client, tmp);
+		add_node_back(g_client, tmp);
 	tmp->bit++;
-	if (signum == SIGUSR1);
+	tmp->byte <<= 1;
+	if (signum == SIGUSR1)
 	{
 		tmp->byte |= 0X01;
 	}
@@ -159,17 +164,18 @@ static void	newnode(int signum, pid_t client_pid)
 
 static void signal_handler(int signum, siginfo_t *info, void *context)
 {
-	if (!client || client->client_pid != info->si_pid)
+	(void)context;
+	if (!g_client || g_client->client_pid != info->si_pid)
 	{
 		newnode(signum, info->si_pid);
 	}
 	else
 	{
-		handle_message(signum);
+		message_handler(signum);
 	}
-	if (client->client_pid == info->si_pid)
+	if (g_client && g_client->client_pid == info->si_pid)
 	{
-		kill(client->client_pid, SIGUSR2);
+		kill(g_client->client_pid, SIGUSR1);
 		if (errno == EPERM || errno == EINVAL)
 		{
 			write(1, "kill failed\n", 12);
@@ -193,8 +199,9 @@ int	main(void)
 		return (write(1, "sigaction failed\n", 17), 1);
 	while (1)
 	{
-		if (kill(client->client_pid, 0) == -1)
-			delete_client();
+		if (g_client)
+			if (kill(g_client->client_pid, 0) == -1)
+				delete_client();
 		pause();
 	}
 }

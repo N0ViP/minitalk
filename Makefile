@@ -1,5 +1,5 @@
 CC			=	cc
-CFLAGS		=	-Wall -Wextra -Werror
+CFLAGS		=	-Wall -Wextra -Werror -g
 NAME_1		=	client
 NAME_2		=	server
 NAME_1_SRC	=	client.c
@@ -13,7 +13,7 @@ all: $(NAME_1) $(NAME_2)
 $(NAME_1): client.o
 	$(CC) $(CFLAGS) client.o -o $(NAME_1)
 
-$(NAME_2): server.o
+$(NAME_2): server_test.o
 	$(CC) $(CFLAGS) server_test.o -o $(NAME_2)
 
 clean:
