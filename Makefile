@@ -3,7 +3,7 @@ CFLAGS		=	-Wall -Wextra -Werror -g
 NAME_1		=	client
 NAME_2		=	server
 NAME_1_SRC	=	client.c
-NAME_2_SRC	=	server_test.c
+NAME_2_SRC	=	server.c
 
 all: $(NAME_1) $(NAME_2)
 
@@ -13,11 +13,11 @@ all: $(NAME_1) $(NAME_2)
 $(NAME_1): client.o
 	$(CC) $(CFLAGS) client.o -o $(NAME_1)
 
-$(NAME_2): server_test.o
-	$(CC) $(CFLAGS) server_test.o -o $(NAME_2)
+$(NAME_2): server.o
+	$(CC) $(CFLAGS) server.o -o $(NAME_2)
 
 clean:
-	rm -fr client.o server_test.o client_bonus.o server_bonus.o
+	rm -fr client.o server.o client_bonus.o server_bonus.o
 
 fclean:	clean
 	rm -fr client server client_bonus server_bonus

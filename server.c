@@ -1,42 +1,72 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   server.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yjaafar <yjaafar@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/20 10:59:09 by yjaafar           #+#    #+#             */
-/*   Updated: 2025/03/20 11:39:38 by yjaafar          ###   ########.fr       */
+/*   Created: 2025/03/22 01:03:11 by yjaafar           #+#    #+#             */
+/*   Updated: 2025/03/22 01:03:13 by yjaafar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+# include "minitalk.h"
 
-static void	banner_part3(void)
+static t_client	*g_client;
+
+static void	ft_putpid(pid_t n)
 {
-	int		n;
-	int		i;
 	char	arr[10];
+	int		i;
 
 	i = 0;
-	write(1, "\t\t\t\t\t\t\t\t\t<<PID = ", 17);
-	n = getpid();
+	if (n == 0)
+		write(1, "0", 1);
 	while (n)
 	{
 		arr[i++] = n % 10 + 48;
 		n /= 10;
 	}
 	while (i--)
+	{
 		write(1, &arr[i], 1);
-	write(1, ">>\n\n", 4);
-	write(1, "\t\t█████╗█████╗█████╗█████╗█████╗█████╗█████╗█████╗"
+	}
+}
+
+static void	ft_putstr(char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		i++;
+	}
+	write(1, s, i);
+}
+
+static void	ft_putclient(void)
+{
+	ft_putstr("client [");
+	ft_putpid(g_client->client_pid);
+	ft_putstr("] : ");
+	g_client->_bool = 0;
+}
+
+static void	banner_part3(void)
+{
+	ft_putstr("\t\t\t\t\t\t\t\t\t<<PID = ");
+	ft_putpid(getpid());
+	write(1,
+		">>\n\n"
+		"\t\t█████╗█████╗█████╗█████╗█████╗█████╗█████╗█████╗"
 		"█████╗█████╗█████╗█████╗█████╗█████╗█████╗█████╗"
 		"█████╗█████╗█████╗█████╗█████╗\n"
 		"\t\t╚════╝╚════╝╚════╝╚════╝╚════╝╚════╝╚════╝╚════╝"
 		"╚════╝╚════╝╚════╝╚════╝╚════╝╚════╝╚════╝╚════╝"
 		"╚════╝╚════╝╚════╝╚════╝╚════╝\n"
 		"\n\n",
-		764);
+		768);
 }
 
 static void	banner_part2(void)
@@ -83,52 +113,114 @@ static void	display_banner(void)
 	banner_part3();
 }
 
-static void	message_handler(int signum, t_client *client)
+static void	free_clients()
 {
-	client->bit++;
-	client->byte <<= 1;
-	if (signum == SIGUSR1)
-		client->byte |= 0X01;
-	if (client->bit == 8 && client->byte)
-		client->message[client->i++] = client->byte;
-	if (client->i == 4096 || (client->bit == 8 && !client->byte))
+	t_client	*tmp;
+
+	while (g_client)
 	{
-		write(1, client->message, client->i);
-		if (client->bit == 8 && !client->byte)
-		{
-			write(1, "\n", 1);
-			if (kill(client->client_pid, SIGUSR2) == -1)
-			{
-				write(1, "kill failed\n", 12);
-				exit(1);
-			}
-			client->client_pid = 0;
-		}
-		client->i = 0;
+		tmp = g_client->next;
+		free(g_client);
+		g_client = tmp;
 	}
-	if (client->bit == 8)
-		client->bit = 0;
 }
 
-static void	signal_handler(int signum, siginfo_t *info,
-	void __attribute__((unused)) *context)
+static void	delete_client()
 {
-	static t_client	client;
+	t_client	*tmp;
 
-	if (!client.client_pid)
-		client.client_pid = info->si_pid;
-	if (client.client_pid != info->si_pid)
+	if (!g_client)
+		return ;
+	tmp = g_client->next;
+	write(1, "\n", 1);
+	free(g_client);
+	g_client = tmp;
+	if (g_client)
 	{
-		client.client_pid = info->si_pid;
-		client.bit = 0;
-		client.i = 0;
+		kill(g_client->client_pid, SIGUSR1);
 	}
-	message_handler(signum, &client);
-	if (client.client_pid)
+}
+
+static void	message_handler(int signum)
+{
+	g_client->bit++;
+	g_client->byte <<= 1;
+	if (signum == SIGUSR1)
+		g_client->byte |= 0X01;
+	if (g_client->bit == 8 && g_client->byte)
+		g_client->message[g_client->i++] = g_client->byte;
+	if (g_client->i == 4096 || (g_client->bit == 8 && !g_client->byte))
 	{
-		if (kill(client.client_pid, SIGUSR1) == -1)
+		write(1, g_client->message, g_client->i);
+		g_client->i = 0;
+		if (g_client->bit == 8 && !g_client->byte)
 		{
-			write(1, "kill failed\n", 12);
+			kill(g_client->client_pid, SIGUSR2);
+			delete_client();
+		}
+	}
+	if (g_client && g_client->bit == 8)
+		g_client->bit = 0;
+}
+
+static void	add_node_back(t_client *lst, t_client *node)
+{
+	while (lst->next)
+	{
+		lst = lst->next;
+	}
+	lst->next = node;
+}
+
+static void	newnode(int signum, pid_t client_pid)
+{
+	t_client	*tmp;
+
+	tmp = (t_client *) malloc(sizeof(t_client));
+	if (!tmp)
+	{
+		free_clients();
+		ft_putstr("malloc failed\n");
+		exit(1);
+	}
+	tmp->client_pid = client_pid;
+	tmp->bit = 0;
+	tmp->byte = 0;
+	tmp->i = 0;
+	tmp->_bool = 1;
+	tmp->next = 0;
+	if (!g_client)
+		g_client = tmp;
+	else
+		add_node_back(g_client, tmp);
+	tmp->bit++;
+	tmp->byte <<= 1;
+	if (signum == SIGUSR1)
+	{
+		tmp->byte |= 0X01;
+	}
+}
+
+static void signal_handler(int signum, siginfo_t *info, void *context)
+{
+	(void)context;
+	if (!g_client || g_client->client_pid != info->si_pid)
+	{
+		newnode(signum, info->si_pid);
+	}
+	else
+	{
+		if (g_client->_bool == 1)
+			ft_putclient();
+		message_handler(signum);
+	}
+	if (g_client && g_client->client_pid == info->si_pid)
+	{
+		kill(g_client->client_pid, SIGUSR1);
+		if (errno == EPERM || errno == EINVAL)
+		{
+			ft_putstr("kill failed\n");
+			free_clients();
 			exit(1);
 		}
 	}
@@ -142,12 +234,17 @@ int	main(void)
 	display_banner();
 	if (sigemptyset(&act.sa_mask) == -1)
 		return (write(1, "sigemptyset failed\n", 19), 1);
+	sigaddset(&act.sa_mask, SIGUSR1);
+	sigaddset(&act.sa_mask, SIGUSR2);
 	act.sa_sigaction = signal_handler;
 	if (sigaction(SIGUSR1, &act, NULL) == -1
 		|| sigaction(SIGUSR2, &act, NULL) == -1)
 		return (write(1, "sigaction failed\n", 17), 1);
 	while (1)
 	{
+		if (g_client)
+			if (kill(g_client->client_pid, 0) == -1)
+				delete_client();
 		pause();
 	}
 }
