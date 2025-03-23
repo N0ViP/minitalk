@@ -6,7 +6,7 @@
 /*   By: yjaafar <yjaafar@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 10:57:33 by yjaafar           #+#    #+#             */
-/*   Updated: 2025/03/23 07:14:39 by yjaafar          ###   ########.fr       */
+/*   Updated: 2025/03/23 09:57:33 by yjaafar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <signal.h>
 # include <unistd.h>
 # include <stdlib.h>
-# include <stdio.h>
 
 typedef struct s_client
 {
