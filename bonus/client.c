@@ -6,7 +6,7 @@
 /*   By: yjaafar <yjaafar@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 10:44:55 by yjaafar           #+#    #+#             */
-/*   Updated: 2025/03/22 01:03:28 by yjaafar          ###   ########.fr       */
+/*   Updated: 2025/03/23 07:16:11 by yjaafar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,7 @@
 
 static volatile sig_atomic_t	g_var;
 
-static void	ft_putstr(char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s[i])
-	{
-		i++;
-	}
-	write(1, s, i);
-}
-
-static int	ft_ascii_to_int(char *s)
+static pid_t	ft_atopid(char *s)
 {
 	long long	res;
 	int			sign;
@@ -44,7 +32,7 @@ static int	ft_ascii_to_int(char *s)
 			return (-1);
 		}
 	}
-	return ((int)res * sign);
+	return ((pid_t)res * sign);
 }
 
 static void	signal_handler(int signum, siginfo_t __attribute__((unused))
@@ -101,11 +89,11 @@ static void	send_message(char *s, int server_pid)
 int	main(int ac, char *av[])
 {
 	struct sigaction	act;
-	int					server_pid;			
+	pid_t				server_pid;			
 
 	if (ac != 3)
 		return (ft_putstr("./client <server_pid> \"message\"\n"), 1);
-	server_pid = ft_ascii_to_int(av[1]);
+	server_pid = ft_atopid(av[1]);
 	if (server_pid <= 0 || kill(server_pid, 0) == -1)
 		return (ft_putstr("Invalid server PID\n"), 1);
 	act.sa_flags = SA_SIGINFO;
@@ -119,4 +107,3 @@ int	main(int ac, char *av[])
 	while (1)
 		pause();
 }
-

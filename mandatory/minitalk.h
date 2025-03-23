@@ -6,7 +6,7 @@
 /*   By: yjaafar <yjaafar@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 10:57:33 by yjaafar           #+#    #+#             */
-/*   Updated: 2025/03/22 01:27:11 by yjaafar          ###   ########.fr       */
+/*   Updated: 2025/03/23 07:14:39 by yjaafar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 # include <signal.h>
 # include <unistd.h>
 # include <stdlib.h>
-# include <errno.h>
-# include <stdio.h>
 
 typedef struct s_client
 {
@@ -27,7 +25,7 @@ typedef struct s_client
 	int				i;
 	char			byte;
 	char			message[4096];
-    struct s_client *next;
+	struct s_client	*next;
 }	t_client;
 
 void	ft_putstr(char *s);
@@ -35,6 +33,6 @@ void	ft_putpid(pid_t n);
 void	display_banner(void);
 void	ft_putclient(t_client *g_client);
 void	free_clients(t_client *g_client);
-void	delete_client(t_client *g_client);
+void	delete_client(t_client **g_client);
 
 #endif
