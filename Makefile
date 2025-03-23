@@ -4,7 +4,7 @@ NAME_1		=	client
 NAME_2		=	server
 NAME_1_SRC	=	mandatory/client.c
 NAME_2_SRC	=	mandatory/server.c	mandatory/diplay_banner.c
-UTILS		=	mandatory/utils.c
+UTILS		=	mandatory/utils.c mandatory/utils_1.c
 OBJS		=	$(NAME_1_SRC:.c=.o) $(NAME_2_SRC:.c=.o) $(UTILS:.c=.o)
 
 all: $(NAME_1) $(NAME_2)

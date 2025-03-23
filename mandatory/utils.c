@@ -77,4 +77,8 @@ void	delete_client(t_client **g_client)
 	{
 		kill((*g_client)->client_pid, SIGUSR1);
 	}
+	else
+	{
+		add_node_back(1, 0, 0);
+	}
 }

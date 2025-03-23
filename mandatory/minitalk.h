@@ -16,6 +16,7 @@
 # include <signal.h>
 # include <unistd.h>
 # include <stdlib.h>
+# include <stdio.h>
 
 typedef struct s_client
 {
@@ -34,5 +35,6 @@ void	display_banner(void);
 void	ft_putclient(t_client *g_client);
 void	free_clients(t_client *g_client);
 void	delete_client(t_client **g_client);
+void	add_node_back(int n, t_client **client, t_client *node);
 
 #endif

@@ -36,14 +36,7 @@ static void	message_handler(int signum)
 		g_client->bit = 0;
 }
 
-static void	add_node_back(t_client *lst, t_client *node)
-{
-	while (lst->next)
-	{
-		lst = lst->next;
-	}
-	lst->next = node;
-}
+////???
 
 static void	newnode(int signum, pid_t client_pid)
 {
@@ -62,10 +55,7 @@ static void	newnode(int signum, pid_t client_pid)
 	tmp->i = 0;
 	tmp->_bool = 1;
 	tmp->next = 0;
-	if (!g_client)
-		g_client = tmp;
-	else
-		add_node_back(g_client, tmp);
+	add_node_back(0, &g_client, tmp);
 	tmp->bit++;
 	tmp->byte <<= 1;
 	if (signum == SIGUSR1)
@@ -74,9 +64,9 @@ static void	newnode(int signum, pid_t client_pid)
 	}
 }
 
-static void	signal_handler(int signum, siginfo_t *info, void *context)
+static void	signal_handler(int signum, siginfo_t *info,
+	void __attribute__((unused)) *context)
 {
-	(void)context;
 	if (!g_client || g_client->client_pid != info->si_pid)
 	{
 		newnode(signum, info->si_pid);
